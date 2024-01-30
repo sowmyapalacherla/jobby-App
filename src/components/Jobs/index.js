@@ -46,6 +46,29 @@ const salaryRangesList = [
   },
 ]
 
+const locationList = [
+  {
+    label: 'Hyderabad',
+    locationId: 'HYDERABAD',
+  },
+  {
+    label: 'Bangalore',
+    locationId: 'BANGALORE',
+  },
+  {
+    label: 'Chennai',
+    locationId: 'CHENNAI',
+  },
+  {
+    label: 'Mumbai',
+    locationId: 'MUMBAI',
+  },
+  {
+    label: 'Delhi',
+    locationId: 'DELHI',
+  },
+]
+
 const apiStatusConstants = {
   initial: 'INITIAL',
   success: 'SUCCESS',
@@ -60,6 +83,7 @@ class Jobs extends Component {
     employeeType: [],
     minimumSalary: 0,
     searchInput: '',
+    locationType: [],
   }
 
   componentDidMount() {
@@ -71,7 +95,7 @@ class Jobs extends Component {
       apiStatus: apiStatusConstants.inProgress,
     })
     const {employeeType, minimumSalary, searchInput} = this.state
-    console.log(employeeType)
+
     const apiUrl = `https://apis.ccbp.in/jobs?employment_type=${employeeType.join()}&minimum_package=${minimumSalary}&search=${searchInput}`
     const jwtToken = Cookies.get('jwt_token')
 
@@ -89,11 +113,12 @@ class Jobs extends Component {
         employmentType: eachJob.employment_type,
         id: eachJob.id,
         jobDescription: eachJob.job_description,
-        location: eachJob.location,
+        locationList: eachJob.location,
         packagePerAnnum: eachJob.package_per_annum,
         rating: eachJob.rating,
         title: eachJob.title,
       }))
+
       this.setState({
         jobsList: updatedJobsData,
         apiStatus: apiStatusConstants.success,
@@ -113,7 +138,7 @@ class Jobs extends Component {
       <div className="all-jobs-container">
         <ul className="jobs-list">
           {jobsList.map(job => (
-            <JobItem jobData={job} key={job.id} />
+            <JobItem jobDetails={job} key={job.id} />
           ))}
         </ul>
       </div>
@@ -202,6 +227,19 @@ class Jobs extends Component {
     }
   }
 
+  changeLocationList = location => {
+    const {locationType} = this.state
+    if (locationType.includes(location)) {
+      const newList = locationType.filter(each => each !== location)
+      this.setState({locationType: newList}, this.getJobs)
+    } else {
+      this.setState(
+        prev => ({locationType: [...prev.locationType, location]}),
+        this.getJobs,
+      )
+    }
+  }
+
   render() {
     const {searchInput} = this.state
     return (
@@ -217,6 +255,8 @@ class Jobs extends Component {
               getJobs={this.getJobs}
               changeSalary={this.changeSalary}
               changeEmployeeList={this.changeEmployeeList}
+              locationList={locationList}
+              changeLocationList={this.changeLocationList}
             />
             <div className="search-input-jobs-list-container">
               <div className="search-input-container-desktop">

@@ -114,6 +114,43 @@ const FiltersGroup = props => {
     )
   }
 
+  const renderLocationList = () => {
+    const {locationList} = props
+    return (
+      <div className="salary-range-container">
+        <h1 className="salary-range-heading">Location</h1>
+        <ul className="salary-range-list-container">
+          {locationList.map(eachLocation => {
+            const {changeLocationList} = props
+            const onClickLocation = () => {
+              changeLocationList(eachLocation.locationId)
+            }
+            return (
+              <li
+                className="salary-item"
+                key={eachLocation.locationId}
+                onClick={onClickLocation}
+              >
+                <input
+                  type="radio"
+                  id={eachLocation.locationId}
+                  name="location"
+                  className="check-input"
+                />
+                <label
+                  htmlFor={eachLocation.locationId}
+                  className="check-label"
+                >
+                  {eachLocation.label}
+                </label>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+    )
+  }
+
   return (
     <div className="filters-group-container">
       {renderSearchInput()}
@@ -122,6 +159,8 @@ const FiltersGroup = props => {
       {renderTypeOfEmployment()}
       <hr className="horizontal-line" />
       {renderSalaryRange()}
+      <hr className="horizontal-line" />
+      {renderLocationList()}
     </div>
   )
 }
